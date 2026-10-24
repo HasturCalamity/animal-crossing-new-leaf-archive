@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useEffect, useState } from 'react';
@@ -29,13 +30,19 @@ export default function TownPage() {
 	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
+		setLoading(true);
+
 		fetch(`/api/towns/${params.data_id}/${params.version}`)
 			.then((res) => res.json())
 			.then((data) => {
-				setData(data)
-				setLoading(false)
+				setData(data);
+				setLoading(false);
+			})
+			.catch(() => {
+				setData({ error: 'Failed to load town data' });
+				setLoading(false);
 			});
-	}, []);
+	}, [params.data_id, params.version]);
 
 	if (isLoading) {
 		// TODO - Add a loader
@@ -63,11 +70,15 @@ export default function TownPage() {
 			<h3>Visits: {data.visits}</h3>
 			<h3>Villagers:</h3>
 			<ol>
-				{data.villagers.map(villager => <li> - {villager}</li>)}
+				{data.villagers.map((villager, index) => (
+					<li key={`${villager}-${index}`}> - {villager}</li>
+				))}
 			</ol>
 			<h3>Versions:</h3>
 			<ol>
-				{data.versions.map(version => <li> - {version}</li>)}
+				{data.versions.map((version, index) => (
+					<li key={`${version}-${index}`}> - {version}</li>
+				))}
 			</ol>
 		</div>
 	)
